@@ -3,6 +3,26 @@ import type { Employee, TaskRow } from './types';
 
 export type Row = Record<string, string | number>;
 
+export const TASK_EXPORT_HEADERS = [
+  'Reference No',
+  'Title',
+  'Primary Responsible Employee',
+  'Department',
+  'Collaborators',
+  'Collaborator Departments',
+  'Priority',
+  'Status',
+  'Overdue',
+  'Due Date',
+  'Completed At (Asia/Colombo)',
+  'Timeliness',
+  'Created At (Asia/Colombo)',
+  'Created By',
+  'Last Updated (Asia/Colombo)',
+  'Archived',
+  'Description',
+];
+
 /** One row per task — the canonical task export layout. */
 export function taskExportRows(tasks: TaskRow[], today = todayISO()): Row[] {
   return tasks.map((t) => {
