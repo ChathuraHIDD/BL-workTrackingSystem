@@ -1,0 +1,29 @@
+# Nightly off-site logical backup (optional).
+# Enable by adding repository secret SUPABASE_DB_URL and repository variable ENABLE_DB_BACKUP=true.
+# Keep this repository PRIVATE — backups contain business data.
+name: Nightly database backup
+on:
+  schedule:
+    - cron: '30 19 * * *' # 01:00 Asia/Colombo
+  workflow_dispatch:
+jobs:
+  backup:
+    if: ${{ vars.ENABLE_DB_BACKUP == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-17
+      - name: Dump database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: ./scripts/backup.sh backups
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ble-db-backup-${{ github.run_id }}
+          path: backups/
+          retention-days: 30

@@ -53,9 +53,10 @@ revoke execute on function private.trigger_email_dispatch() from public, anon, a
 do $$
 begin
   if exists (select 1 from pg_available_extensions where name = 'pg_cron') then
-    create extension if not exists pg_cron;
+    create extension if not exists pg_cron with schema pg_catalog;
+    grant usage on schema cron to postgres;
     if exists (select 1 from pg_available_extensions where name = 'pg_net') then
-      create extension if not exists pg_net;
+      create extension if not exists pg_net with schema extensions;
     end if;
 
     perform cron.unschedule(jobname) from cron.job
